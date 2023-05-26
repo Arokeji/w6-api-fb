@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const validCountries: string[] = ["COLOMBIA", "ENGLAND", "RUSSIA", "UNITED STATES", "ARGENTINA", "CZECHOSLOVAKIA", "JAPAN", "NIGERIA"];
 
-export interface IAuthor {
+export interface IUser {
   user: string;
   password?: string;
   name: string;
@@ -15,7 +15,7 @@ export interface IAuthor {
 }
 
 // Creacion del esquema del autor
-const authorSchema = new Schema<IAuthor>({
+const authorSchema = new Schema<IUser>({
   user: {
     type: String,
     trim: true,
@@ -73,4 +73,4 @@ authorSchema.pre("save", async function (next) {
 });
 
 // Creacion del modelo en si con un nombre y la configuracion del esquema
-export const Author = mongoose.model<IAuthor>("Author", authorSchema);
+export const Author = mongoose.model<IUser>("Author", authorSchema);
