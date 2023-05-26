@@ -9,6 +9,8 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
     project: ["./tsconfig.json"],
+    // Add the "include" configuration here
+    include: ["seeds/friendships.ts", "src/**/*.ts"],
   },
   ignorePatterns: ["dist/*"],
   rules: {

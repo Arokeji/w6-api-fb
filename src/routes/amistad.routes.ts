@@ -3,7 +3,7 @@ import multer from "multer";
 import fs from "fs";
 
 // Modelos
-import { Book } from "../models/Grupo";
+import { Book } from "../models/Group";
 import { Author } from "../models/Usuario";
 
 // Export de rutas
