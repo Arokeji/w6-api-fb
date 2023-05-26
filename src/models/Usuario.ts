@@ -1,6 +1,6 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
-import { type IBook } from "./Grupo";
+import { type IBook } from "./Group";
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
