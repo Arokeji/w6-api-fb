@@ -3,11 +3,11 @@ import express from "express";
 import type { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { connect } from "./db";
 
-import { bookRoutes } from "./routes/book.routes";
-import { authorRoutes } from "./routes/author.routes";
+import { postRoutes } from "./routes/post.routes";
+// import { authorRoutes } from "./routes/author.routes";
 // const { fileUploadRouter } = require("./routes/file-upload.routes.js");
 
-const corsWhiteList = ["http://localhost:3000", "http://localhost:3001", "https://s7validationcors.vercel.app"];
+const corsWhiteList = ["http://localhost:3000", "http://localhost:3001"];
 
 // const corsWhiteList = "*";
 
@@ -27,7 +27,7 @@ const main = async (): Promise<void> => {
   // Rutas
   const router = express.Router();
   router.get("/", (req: Request, res: Response) => {
-    res.send(`Library API Typescript en entorno ${database?.connection?.name as string}`);
+    res.send(`Facebookish API Typescript en entorno ${database?.connection?.name as string}`);
   });
   router.get("*", (req: Request, res: Response) => {
     res.status(404).send("La pagina solicitada no existe");
@@ -41,9 +41,8 @@ const main = async (): Promise<void> => {
   });
 
   // Uso del router
-  app.use("/book", bookRoutes);
-  app.use("/author", authorRoutes);
-  app.use("/public", express.static("public"));
+  app.use("/post", postRoutes);
+  // app.use("/public", express.static("public"));
   // app.use("/file-upload", fileUploadRouter);
   app.use("/", router);
 
