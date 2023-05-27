@@ -4,10 +4,9 @@ import { generateToken } from "../utils/token";
 import { isAuth } from "../middleware/usuario.middleware";
 
 // Modelos
-// import { User } from "../models/User";
+import { User } from "../models/User";
 // import { Group } from "../models/Group";
 import { Post } from "../models/Post";
-
 
 // Export de rutas
 export const postRoutes = express.Router();
@@ -183,7 +182,7 @@ postRoutes.post("/login", async (req: any, res: Response, next: NextFunction) =>
       delete userPasswordFiltered.password;
 
       // Generamos token JWT
-      const jwtToken = generateToken(userFound._id.toString(), userFound.user);
+      const jwtToken = generateToken(userFound._id.toString(), userFound.name);
 
       console.log("Login correcto");
 
