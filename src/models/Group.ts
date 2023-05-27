@@ -24,10 +24,7 @@ const groupSchema = new Schema<IGroup>(
     },
     groupName: {
       type: String,
-      required: false,
-      trim: true,
-      min: [1, "Tiene que tener como minimo una pagina"],
-      max: [15000, "Como maximo se permiten 15000 paginas"],
+      required: true,
     },
     coverImage: {
       type: String,

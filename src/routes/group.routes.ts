@@ -3,11 +3,11 @@ import multer from "multer";
 import fs from "fs";
 
 // Modelos
-import { Book } from "../models/Group";
-import { Author } from "../models/User";
+import { Group } from "../models/Group";
+import { User } from "../models/User";
 
 // Export de rutas
-export const bookRoutes = express.Router();
+export const groupRoutes = express.Router();
 
 // Configuracion de Multer para subida de archivos
 const upload = multer({ dest: "public" });
@@ -15,8 +15,8 @@ const upload = multer({ dest: "public" });
 // Rutas
 // CRUD: Read
 // Ejemplo de request con parametros http://localhost:3000/book/?page=2&limit=10
-bookRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
-  console.log("Estamos en el middleware /book que comprueba parámetros");
+groupRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
+  console.log("Estamos en el middleware /group que comprueba parámetros");
 
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -36,23 +36,23 @@ bookRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-bookRoutes.get("/", async (req: Request, res: Response) => {
+groupRoutes.get("/", async (req: Request, res: Response) => {
   try {
     // Lectura de query parameters
     const { page, limit } = req.query as any;
-    const books = await Book.find()
+    const groups = await Group.find()
       .limit(limit)
       .skip((page - 1) * limit)
-      .populate("author");
+      .populate("users");
 
     // Conteo del total de elementos
-    const totalElements = await Book.countDocuments();
+    const totalElements = await Group.countDocuments();
 
     const response = {
       totalItems: totalElements,
       totalPages: Math.ceil(totalElements / limit),
       currentPage: page,
-      data: books,
+      data: groups,
     };
 
     res.json(response);
@@ -63,38 +63,33 @@ bookRoutes.get("/", async (req: Request, res: Response) => {
 });
 
 // CRUD: Create
-bookRoutes.post("/", async (req: Request, res: Response, next: NextFunction) => {
+groupRoutes.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const book = new Book({
-      title: req.body.title,
-      author: req.body.author,
-      pages: req.body.pages,
-      rating: req.body.rating,
-      publisher: {
-        name: req.body.publisher.name,
-        category: req.body.publisher.category,
-      },
+    const group = new Group({
+      admin: req.body.admin,
+      users: req.body.users,
+      groupName: req.body.groupName,
+      coverImage: req.body.coverImage,
     });
-
-    const createdBook = await book.save();
-    return res.status(200).json(createdBook);
+    const createdGroup = await group.save();
+    return res.status(200).json(createdGroup);
   } catch (error) {
     next(error);
   }
 });
 
 // CRUD: Read
-bookRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
+groupRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
 
   try {
-    const book = await Book.findById(id).populate("author");
+    const group = await Group.findById(id).populate("users");
 
-    if (book) {
-      const author = await Author.findById(book.author); // en vez de { author: id }
-      const tempBook = book.toObject();
-      tempBook.author = author as any;
-      res.json(tempBook);
+    if (group) {
+      const users = await User.findById(group.users); // en vez de { users: id }
+      const tempGroup = group.toObject();
+      tempGroup.users = users as any;
+      res.json(tempGroup);
     } else {
       res.status(404).json({});
     }
@@ -104,13 +99,13 @@ bookRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction) =
 });
 
 // No CRUD. Busqueda personalizada
-bookRoutes.get("/title/:title", async (req: Request, res: Response, next: NextFunction) => {
+groupRoutes.get("/title/:title", async (req: Request, res: Response, next: NextFunction) => {
   const title = req.params.title;
 
   try {
-    const book = await Book.find({ title: new RegExp("^" + title.toLowerCase(), "i") }).populate("author");
-    if (book) {
-      res.json(book);
+    const group = await Group.find({ title: new RegExp("^" + title.toLowerCase(), "i") }).populate("users");
+    if (group) {
+      res.json(group);
     } else {
       res.status(404).json({});
     }
@@ -120,12 +115,12 @@ bookRoutes.get("/title/:title", async (req: Request, res: Response, next: NextFu
 });
 
 // CRUD: Delete
-bookRoutes.delete("/:id", async (req: Request, res: Response, next: NextFunction) => {
+groupRoutes.delete("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const bookDeleted = await Book.findByIdAndDelete(id);
-    if (bookDeleted) {
-      res.json(bookDeleted);
+    const groupDeleted = await Group.findByIdAndDelete(id);
+    if (groupDeleted) {
+      res.json(groupDeleted);
     } else {
       res.status(404).json({});
     }
@@ -135,12 +130,12 @@ bookRoutes.delete("/:id", async (req: Request, res: Response, next: NextFunction
 });
 
 // CRUD: Put
-bookRoutes.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
+groupRoutes.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const bookUpdated = await Book.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-    if (bookUpdated) {
-      res.json(bookUpdated);
+    const groupUpdated = await Group.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+    if (groupUpdated) {
+      res.json(groupUpdated);
     } else {
       res.status(404).json({});
     }
@@ -149,7 +144,7 @@ bookRoutes.put("/:id", async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
-bookRoutes.post("/cover-upload", upload.single("cover"), async (req: Request, res: Response, next: NextFunction) => {
+groupRoutes.post("/cover-upload", upload.single("cover"), async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Renombrado de la imagen
     const originalName = req.file?.originalname as string;
@@ -159,18 +154,18 @@ bookRoutes.post("/cover-upload", upload.single("cover"), async (req: Request, re
     fs.renameSync(path, newPath);
 
     // Busqueda del libro por ID
-    const bookId = req.body.bookId;
-    const book = await Book.findById(bookId);
+    const groupId = req.body.groupId;
+    const group = await Group.findById(groupId);
 
-    if (book) {
-      book.coverImage = newPath;
-      await book.save();
-      res.json(book);
+    if (group) {
+      group.coverImage = newPath;
+      await group.save();
+      res.json(group);
       console.log("✅ Cover uploaded and added succesfully.");
     } else {
       // Borra la imagen si no existe el libro
       fs.unlinkSync(newPath);
-      res.status(404).send("Book not found. Please specify another Id.");
+      res.status(404).send("Group not found. Please specify another Id.");
     }
   } catch (error) {
     next(error);
