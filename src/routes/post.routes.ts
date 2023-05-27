@@ -4,9 +4,9 @@ import { generateToken } from "../utils/token";
 import { isAuth } from "../middleware/usuario.middleware";
 
 // Modelos
-import { User } from "../models/User";
-// import { Group } from "../models/Group";
 import { Post } from "../models/Post";
+import { User } from "../models/User";
+import { Group } from "../models/Group";
 
 // Export de rutas
 export const postRoutes = express.Router();
@@ -41,7 +41,7 @@ postRoutes.get("/", async (req: Request, res: Response, next: NextFunction) => {
     // Lectura de query parameters
     const page = parseInt(req.query.page as string);
     const limit = parseInt(req.query.limit as string);
-    const authors = await Post.find()
+    const posts = await Post.find()
       .limit(limit)
       .skip((page - 1) * limit);
 
@@ -52,7 +52,7 @@ postRoutes.get("/", async (req: Request, res: Response, next: NextFunction) => {
       totalItems: totalElements,
       totalPages: Math.ceil(totalElements / limit),
       currentPage: page,
-      data: authors,
+      data: posts,
     };
 
     res.json(response);
@@ -67,13 +67,18 @@ postRoutes.post("/", async (req: Request, res: Response, next: NextFunction) => 
   try {
     const post = new Post({
       user: req.body.user,
-      password: req.body.text,
-      name: req.body.attachedFile,
-      country: req.body.group,
+      text: req.body.text,
+      attachedFile: req.body.attachedFile,
+      group: req.body.group,
     });
 
-    const createdPost = await post.save();
-    return res.status(200).json(createdPost);
+    const groupExists = await Group.findById(req.body.group);
+    if (groupExists) {
+      const createdPost = await post.save();
+      return res.status(200).json(createdPost);
+    } else {
+      return res.status(404).json("Group does not exist.");
+    }
   } catch (error) {
     next(error);
   }

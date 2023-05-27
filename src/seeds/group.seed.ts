@@ -28,7 +28,7 @@
 //         groupName: "To Kill a Mockingbird",
 //         admin: 281,
 //         users: [{}],
-//       }
+//       },
 //     ];
 
 //     for (let i = 0; i < 50; i++) {
