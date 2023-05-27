@@ -3,15 +3,19 @@ import { type IUser } from "./User";
 const Schema = mongoose.Schema;
 
 export interface IGroup {
+  groupName: string;
   admin: IUser;
   users: IUser;
-  groupName: string;
   coverImage: string;
 }
 
 // Creacion del esquema del libro
 const groupSchema = new Schema<IGroup>(
   {
+    groupName: {
+      type: String,
+      required: true,
+    },
     admin: {
       // Parametros del campo
       type: mongoose.Schema.Types.ObjectId,
@@ -21,10 +25,6 @@ const groupSchema = new Schema<IGroup>(
     users: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IUser",
-    },
-    groupName: {
-      type: String,
-      required: true,
     },
     coverImage: {
       type: String,
