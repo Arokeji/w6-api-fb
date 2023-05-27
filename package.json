@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "seed:user": "ts-node-dev ./src/seeds/user.seed.ts",
     "start": "ts-node-dev ./src/index.ts",
     "start:pro": "npm run build && node ./dist/index.js",
     "build": "tsc",
