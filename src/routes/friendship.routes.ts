@@ -28,6 +28,32 @@ friendshipRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+friendshipRoutes.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  console.log("🧭 Lógica de /friendship en marcha.");
+  try {
+    // Lectura de query parameters
+    const page = parseInt(req.query.page as string);
+    const limit = parseInt(req.query.limit as string);
+    const friendships = await Friendship.find()
+      .limit(limit)
+      .skip((page - 1) * limit);
+
+    // Conteo del total de elementos
+    const totalElements = await Friendship.countDocuments();
+
+    const response = {
+      totalItems: totalElements,
+      totalPages: Math.ceil(totalElements / limit),
+      currentPage: page,
+      data: friendships,
+    };
+
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
 friendshipRoutes.post("/send-request", async (req: Request, res: Response) => {
   try {
     const { senderId, receiverId } = req.body;
