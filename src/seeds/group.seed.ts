@@ -1,6 +1,7 @@
 // import mongoose from "mongoose";
 // import { connect } from "../db.js";
-// import { type IGroup } from "../models/Group";
+
+// import { Group } from "../models/Group.ts";
 // import { faker } from "@faker-js/faker";
 
 // const groupSeed = async () => {
@@ -10,9 +11,8 @@
 //     console.log("Conexion desde el seed satisfactoria");
 
 //     // Borrado de datos
-//     await IGroup.collection.drop();
-//     console.log("Limpieza de la coleccion IGroup realizada");
-
+//     await Group.collection.drop();
+//     console.log("Limpieza de la coleccion Group realizada");
 //     const groupList = [
 //       {
 //         groupName: "Cocina facil",
@@ -28,7 +28,7 @@
 //         groupName: "To Kill a Mockingbird",
 //         admin: 281,
 //         users: [{}],
-//       }
+//       },
 //     ];
 
 //     for (let i = 0; i < 50; i++) {
@@ -38,6 +38,7 @@
 //           groupName: faker.lorem.words(2),
 //           // author: faker.name.fullName(),
 //           admin: faker.datatype.number({ min: 100, max: 300 }),
+//           rating: Math.floor(Math.random() * 11),
 //           users: {
 //             name: faker.internet.userName(),
 //             category: faker.color.human(),
@@ -52,7 +53,7 @@
 
 //     // Insercion de groups
 //     const documents = groupList.map((group) => new Group(group));
-//     await IGroup.insertMany(documents);
+//     await Group.insertMany(documents);
 //     console.log("Datos insertados correctamente");
 //   } catch (error) {
 //     console.error(error);
