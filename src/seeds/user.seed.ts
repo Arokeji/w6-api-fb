@@ -11,7 +11,7 @@ const userSeed = async (): Promise <void> => {
 
     // Borrado de datos
     await User.collection.drop();
-    console.log("Limpieza de la coleccion Author realizada");
+    console.log("Limpieza de la coleccion Usuario realizada");
 
     const userList = [
       { email: "gabri@gmail.com", password: "12345678", phoneNumber: "611111111", name: "Gabriel", lastname: "García Márquez", gender: "HOMBRE", dateOfBirth: "2005/05/10" },
@@ -23,7 +23,7 @@ const userSeed = async (): Promise <void> => {
       { email: "franz@gmail.com", password: "12345678", phoneNumber: "677777777", name: "Franz", lastname: "Kafka", gender: "PERSONALIZADO", dateOfBirth: "2005/05/16" },
       { email: "toni@gmail.com", password: "12345678", phoneNumber: "688888888", name: "Toni", lastname: "Morrison", gender: "HOMBRE", dateOfBirth: "2005/05/17" },
       { email: "haruki@gmail.com", password: "12345678", phoneNumber: "619999999", name: "Haruki", lastname: "Murakami", gender: "HOMBRE", dateOfBirth: "2005/05/18" },
-      { email: "chinua@gmail.com", password: "12345678", phoneNumber: "623456789", name: "Chinua", lastname: "Achebe", gender: "HOMBRE", dateOfBirth: "2005/05/19" },
+      { email: "chinua@gmail.com", password: "12345678", phoneNumber: "623456781", name: "Chinua", lastname: "Achebe", gender: "HOMBRE", dateOfBirth: "2005/05/19" },
     ];
 
     // GENERACION DE AUTORES ALEATORIOS
