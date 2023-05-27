@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 export interface IGroup {
   groupName: string;
   admin: IUser;
-  users: IUser;
+  users: [IUser];
   coverImage: string;
 }
 
@@ -22,10 +22,14 @@ const groupSchema = new Schema<IGroup>(
       required: true,
       ref: "IUser",
     },
-    users: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "IUser",
-    },
+    users: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "IUser",
+        },
+      },
+    ],
     coverImage: {
       type: String,
       required: false,

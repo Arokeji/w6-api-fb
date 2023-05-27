@@ -1,5 +1,6 @@
 // import mongoose from "mongoose";
 // import { connect } from "../db.js";
+
 // import { Group } from "../models/Group.ts";
 // import { faker } from "@faker-js/faker";
 
@@ -12,7 +13,6 @@
 //     // Borrado de datos
 //     await Group.collection.drop();
 //     console.log("Limpieza de la coleccion Group realizada");
-
 //     const groupList = [
 //       {
 //         groupName: "Cocina facil",
