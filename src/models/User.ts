@@ -1,22 +1,38 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
-import { type IBook } from "./Group";
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const validCountries: string[] = ["COLOMBIA", "ENGLAND", "RUSSIA", "UNITED STATES", "ARGENTINA", "CZECHOSLOVAKIA", "JAPAN", "NIGERIA"];
+const validGender = ["MUJER, HOMBRE, PERSONALIZADO"]
 
-export interface IAuthor {
-  user: string;
-  password?: string;
+export interface IUser {
   name: string;
-  country: string;
-  books?: IBook;
+  lastname: string;
+  email: string;
+  phoneNumber: number;
+  password?: string;
+  dateOfBirth: number;
+  gender: string;
+
 }
 
-// Creacion del esquema del autor
-const authorSchema = new Schema<IAuthor>({
-  user: {
+// Creacion del esquema del usuario
+const userSchema = new Schema<IUser>({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    minLength: [3, "No se ha alcanzado el minimo de caracteres"],
+    maxLength: [50, "Se ha superado el maximo de caracteres"],
+  },
+  lastname: {
+    type: String,
+    required: true,
+    trim: true,
+    minLength: [3, "No se ha alcanzado el minimo de caracteres"],
+    maxLength: [50, "Se ha superado el maximo de caracteres"],
+  },
+  email: {
     type: String,
     trim: true,
     unique: true,
@@ -26,6 +42,16 @@ const authorSchema = new Schema<IAuthor>({
       message: "El usuario debe ser un email.",
     },
   },
+  phoneNumber: {
+    type: Number,
+    trim: true,
+    unique: true,
+    required: true,
+    validate: {
+      validator: (value: number) => validator.isMobilePhone(value.toString(), ["es-ES"]),
+      message: "Debe ser un numero de teléfono móvil.",
+    },
+  },
   password: {
     type: String,
     trim: true,
@@ -33,31 +59,30 @@ const authorSchema = new Schema<IAuthor>({
     select: false, // Indica que no se muestra en las consultas
     required: true,
   },
-  name: {
-    type: String,
-    required: true,
+
+  dateOfBirth: {
+    type: Number,
     trim: true,
-    minLength: [3, "No se ha alcanzado el minimo de caracteres"],
-    maxLength: [50, "Se ha superado el maximo de caracteres"],
+    unique: true,
+    required: true,
+    validate: {
+      validator: (value: number) => validator.isDate(value.toString()),
+      message: "Debe ser un numero fecha valida.",
+    },
   },
-  country: {
+  gender: {
     type: String,
     required: false,
     trim: true,
     uppercase: true,
-    enum: validCountries,
+    enum: validGender,
   },
-  books: {
-    type: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Book",
-    },
-  },
+
 });
 
 // Encriptado de la contraseña antes de que guarde
 // Usamos function en vez de una arrow para que pueda leer el this fuera de esta
-authorSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   try {
     // Si la contraseña ya estaba encriptada no la encripta de nuevo
     if (this.isModified("password")) {
@@ -73,4 +98,4 @@ authorSchema.pre("save", async function (next) {
 });
 
 // Creacion del modelo en si con un nombre y la configuracion del esquema
-export const Author = mongoose.model<IAuthor>("Author", authorSchema);
+export const User = mongoose.model<IUser>("User", userSchema);
