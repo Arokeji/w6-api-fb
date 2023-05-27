@@ -1,4 +1,4 @@
-import express, { type Request, type Response } from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
 
 // Modelos
 import { User } from "../models/User";
@@ -6,6 +6,27 @@ import { Friendship } from "../models/Friendship";
 
 // Export de rutas
 export const friendshipRoutes = express.Router();
+
+friendshipRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
+  console.log("Estamos en el middleware /friendship que comprueba parámetros");
+
+  try {
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+
+    if (!isNaN(page) && !isNaN(limit) && page > 0 && limit > 0) {
+      req.query.page = page as any;
+      req.query.limit = limit as any;
+      next();
+    } else {
+      console.log("Parámetros no válidos:");
+      console.log(JSON.stringify(req.query));
+      res.status(400).json({ error: "Params page or limit are not valid" });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 friendshipRoutes.post("/send-request", async (req: Request, res: Response) => {
   try {
