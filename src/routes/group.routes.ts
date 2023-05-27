@@ -4,7 +4,7 @@ import fs from "fs";
 
 // Modelos
 import { Group } from "../models/Group";
-import { type IUser } from "../models/User";
+import { User } from "../models/User";
 
 // Export de rutas
 export const groupRoutes = express.Router();
@@ -86,7 +86,7 @@ groupRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction) 
     const group = await Group.findById(id).populate("users");
 
     if (group) {
-      const users = await IUser.findById(group.users); // en vez de { users: id }
+      const users = await User.findById(group.users); // en vez de { users: id }
       const tempGroup = group.toObject();
       tempGroup.users = users as any;
       res.json(tempGroup);

@@ -4,6 +4,10 @@ import type { Request, Response, NextFunction, ErrorRequestHandler } from "expre
 import { connect } from "./db";
 
 import { postRoutes } from "./routes/post.routes";
+import { friendshipRoutes } from "./routes/friendship.routes";
+import { groupRoutes } from "./routes/group.routes";
+// import { userRoutes } from "./routes/user.routes";
+
 // import { authorRoutes } from "./routes/author.routes";
 // const { fileUploadRouter } = require("./routes/file-upload.routes.js");
 
@@ -42,6 +46,9 @@ const main = async (): Promise<void> => {
 
   // Uso del router
   app.use("/post", postRoutes);
+  app.use("/friendship", friendshipRoutes);
+  app.use("/group", groupRoutes);
+  // app.use("/user", userRoutes);
   // app.use("/public", express.static("public"));
   // app.use("/file-upload", fileUploadRouter);
   app.use("/", router);
