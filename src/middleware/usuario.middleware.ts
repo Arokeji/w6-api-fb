@@ -1,4 +1,5 @@
-import { Author } from "../models/Usuario";
+
+import { User } from "../models/User";
 import { verifyToken } from "../utils/token";
 import { type NextFunction, type Response } from "express";
 
@@ -12,18 +13,18 @@ export const isAuth = async (req: any, res: Response, next: NextFunction): Promi
 
     // Verificamos y decodificamos el token
     const decodedInfo = verifyToken(token);
-    const authorFound = await Author.findOne({ user: decodedInfo.authorUser }).select("+password");
-    if (!authorFound) {
+    const userFound = await User.findOne({ user: decodedInfo.userUser }).select("+password");
+    if (!userFound) {
       throw new Error("2No estas autorizado a realizar esta operacion");
     }
 
-    if (!authorFound) {
+    if (!userFound) {
       throw new Error("3No estas autorizado a realizar esta operacion");
     } else {
       console.log("Usuario encontrado por el middleware");
     }
 
-    req.author = authorFound;
+    req.user = userFound;
     next();
     return null;
   } catch (error) {
