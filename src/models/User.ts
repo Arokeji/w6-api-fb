@@ -9,9 +9,9 @@ export interface IUser {
   name: string;
   lastname: string;
   email: string;
-  phoneNumber: number;
+  phoneNumber: string;
   password?: string;
-  dateOfBirth: number;
+  dateOfBirth: string;
   gender: string;
 
 }
@@ -43,12 +43,12 @@ const userSchema = new Schema<IUser>({
     },
   },
   phoneNumber: {
-    type: Number,
+    type: String,
     trim: true,
     unique: true,
     required: true,
     validate: {
-      validator: (value: number) => validator.isMobilePhone(value.toString(), ["es-ES"]),
+      validator: (value: string) => validator.isMobilePhone(value, ["es-ES"]),
       message: "Debe ser un numero de teléfono móvil.",
     },
   },
@@ -61,13 +61,13 @@ const userSchema = new Schema<IUser>({
   },
 
   dateOfBirth: {
-    type: Number,
+    type: String,
     trim: true,
     unique: true,
     required: true,
     validate: {
-      validator: (value: number) => validator.isDate(value.toString()),
-      message: "Debe ser un numero fecha valida.",
+      validator: (value: string) => validator.isDate(value),
+      message: "Debe ser una fecha valida.",
     },
   },
   gender: {
