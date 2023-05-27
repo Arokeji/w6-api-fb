@@ -3,7 +3,11 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const validGender = ["MUJER, HOMBRE, PERSONALIZADO"]
+enum validGender {
+  HOMBRE = "HOMBRE",
+  MUJER = "MUJER",
+  PERSONALIZADO = "PERSONALIZADO",
+}
 
 export interface IUser {
   name: string;
@@ -13,7 +17,6 @@ export interface IUser {
   password?: string;
   dateOfBirth: string;
   gender: string;
-
 }
 
 // Creacion del esquema del usuario
@@ -77,7 +80,6 @@ const userSchema = new Schema<IUser>({
     uppercase: true,
     enum: validGender,
   },
-
 });
 
 // Encriptado de la contraseña antes de que guarde

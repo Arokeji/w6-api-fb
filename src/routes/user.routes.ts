@@ -116,7 +116,7 @@ userRoutes.get("/name/:name", async (req: Request, res: Response, next: NextFunc
 userRoutes.delete("/:id", isAuth, async (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    console.log(req.author.user);
+    console.log(req.user.id);
     if (req.user.id !== id && req.user.user !== "admin@gmail.com") {
       return res.status(401).json({ error: "No tienes permisos para realizar esta operacion." });
     }
