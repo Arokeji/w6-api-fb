@@ -4,7 +4,7 @@ import fs from "fs";
 
 // Modelos
 import { Book } from "../models/Group";
-import { Author } from "../models/Usuario";
+import { Author } from "../models/User";
 
 // Export de rutas
 export const bookRoutes = express.Router();

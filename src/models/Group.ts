@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { type IUser } from "./Usuario";
+import { type IUser } from "./User";
 const Schema = mongoose.Schema;
 
 export interface IGroup {
