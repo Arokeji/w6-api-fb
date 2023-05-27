@@ -8,6 +8,7 @@ import { isAuth } from "../middleware/usuario.middleware";
 // import { Group } from "../models/Group";
 import { Post } from "../models/Post";
 
+
 // Export de rutas
 export const postRoutes = express.Router();
 

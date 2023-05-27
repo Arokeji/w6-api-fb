@@ -1,17 +1,21 @@
 import mongoose from "mongoose";
-import { type IUser } from "./Usuario";
+import { type IUser } from "./User";
 const Schema = mongoose.Schema;
 
 export interface IGroup {
+  groupName: string;
   admin: IUser;
   users: IUser;
-  groupName: string;
   coverImage: string;
 }
 
 // Creacion del esquema del libro
 const groupSchema = new Schema<IGroup>(
   {
+    groupName: {
+      type: String,
+      required: true,
+    },
     admin: {
       // Parametros del campo
       type: mongoose.Schema.Types.ObjectId,
@@ -21,13 +25,6 @@ const groupSchema = new Schema<IGroup>(
     users: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "IUser",
-    },
-    groupName: {
-      type: String,
-      required: false,
-      trim: true,
-      min: [1, "Tiene que tener como minimo una pagina"],
-      max: [15000, "Como maximo se permiten 15000 paginas"],
     },
     coverImage: {
       type: String,

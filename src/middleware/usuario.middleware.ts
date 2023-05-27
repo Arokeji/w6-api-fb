@@ -1,4 +1,5 @@
-import { User } from "../models/Usuario";
+
+import { User } from "../models/User";
 import { verifyToken } from "../utils/token";
 import { type NextFunction, type Response } from "express";
 

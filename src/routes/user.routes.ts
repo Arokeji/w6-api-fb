@@ -4,7 +4,7 @@ import { generateToken } from "../utils/token";
 import { isAuth } from "../middleware/auth.middleware";
 
 // Modelos
-import { Author } from "../models/Usuario";
+import { Author } from "../models/User";
 
 // Export de rutas
 export const authorRoutes = express.Router();
