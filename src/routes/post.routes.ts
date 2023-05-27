@@ -1,19 +1,21 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token";
-import { isAuth } from "../middleware/auth.middleware";
+import { isAuth } from "../middleware/usuario.middleware";
 
 // Modelos
-import { Author } from "../models/Usuario";
+// import { User } from "../models/User";
+// import { Group } from "../models/Group";
+import { Post } from "../models/Post";
 
 // Export de rutas
-export const authorRoutes = express.Router();
+export const postRoutes = express.Router();
 
 // Rutas
 // CRUD: Read
-// Ejemplo de request con parametros http://localhost:3000/author/?page=2&limit=10
-authorRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
-  console.log("Estamos en el middleware /author que comprueba parámetros");
+postRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
+  // Ejemplo de request con parametros http://localhost:3000/post/?page=2&limit=10
+  console.log("🧭 Recogida de parametros en ruta /post en marcha.");
 
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -33,17 +35,18 @@ authorRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-authorRoutes.get("/", async (req: Request, res: Response, next: NextFunction) => {
+postRoutes.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  console.log("🧭 Lógica de /post en marcha.");
   try {
     // Lectura de query parameters
     const page = parseInt(req.query.page as string);
     const limit = parseInt(req.query.limit as string);
-    const authors = await Author.find()
+    const authors = await Post.find()
       .limit(limit)
       .skip((page - 1) * limit);
 
     // Conteo del total de elementos
-    const totalElements = await Author.countDocuments();
+    const totalElements = await Post.countDocuments();
 
     const response = {
       totalItems: totalElements,
@@ -59,32 +62,32 @@ authorRoutes.get("/", async (req: Request, res: Response, next: NextFunction) =>
 });
 
 // CRUD: Create
-authorRoutes.post("/", async (req: Request, res: Response, next: NextFunction) => {
-  console.log("Creando autor");
+postRoutes.post("/", async (req: Request, res: Response, next: NextFunction) => {
+  console.log("Creando un nuevo post");
   try {
-    const author = new Author({
+    const post = new Post({
       user: req.body.user,
-      password: req.body.password,
-      name: req.body.name,
-      country: req.body.country,
+      password: req.body.text,
+      name: req.body.attachedFile,
+      country: req.body.group,
     });
 
-    const createdAuthor = await author.save();
-    return res.status(200).json(createdAuthor);
+    const createdPost = await post.save();
+    return res.status(200).json(createdPost);
   } catch (error) {
     next(error);
   }
 });
 
 // CRUD: Read
-authorRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
+postRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
 
   try {
-    const author = await Author.findById(id);
+    const post = await Post.findById(id);
 
-    if (author) {
-      res.json(author);
+    if (post) {
+      res.json(post);
     } else {
       res.status(404).json({});
     }
@@ -93,14 +96,14 @@ authorRoutes.get("/:id", async (req: Request, res: Response, next: NextFunction)
   }
 });
 
-// No CRUD. Busqueda personalizada
-authorRoutes.get("/name/:name", async (req: Request, res: Response, next: NextFunction) => {
-  const name = req.params.name;
+// No CRUD. Busqueda personalizada para texto
+postRoutes.get("/text/:text", async (req: Request, res: Response, next: NextFunction) => {
+  const text = req.params.text;
 
   try {
-    const author = await Author.find({ name: new RegExp("^" + name.toLowerCase(), "i") });
-    if (author) {
-      res.json(author);
+    const post = await Post.find({ name: new RegExp("^" + text.toLowerCase(), "i") });
+    if (post) {
+      res.json(post);
     } else {
       res.status(404).json({});
     }
@@ -110,17 +113,17 @@ authorRoutes.get("/name/:name", async (req: Request, res: Response, next: NextFu
 });
 
 // CRUD: Delete con el middleware isAuth
-authorRoutes.delete("/:id", isAuth, async (req: any, res: Response, next: NextFunction) => {
+postRoutes.delete("/:id", isAuth, async (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    console.log(req.author.user);
-    if (req.author.id !== id && req.author.user !== "admin@gmail.com") {
+    console.log(req.user.user);
+    if (req.user.id !== id && req.user.name !== "superadmin") {
       return res.status(401).json({ error: "No tienes permisos para realizar esta operacion." });
     }
 
-    const authorDeleted = await Author.findByIdAndDelete(id);
-    if (authorDeleted) {
-      res.json(authorDeleted);
+    const postDeleted = await Post.findByIdAndDelete(id);
+    if (postDeleted) {
+      res.json(postDeleted);
     } else {
       res.status(404).json({});
     }
@@ -130,21 +133,21 @@ authorRoutes.delete("/:id", isAuth, async (req: any, res: Response, next: NextFu
 });
 
 // CRUD: Put con el middleware isAuth
-authorRoutes.put("/:id", isAuth, async (req: any, res: Response, next: NextFunction) => {
+postRoutes.put("/:id", isAuth, async (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
 
-    if (req.author.id !== id && req.author.user !== "admin@gmail.com") {
+    if (req.user.id !== id && req.user.name !== "superadmin") {
       return res.status(401).json({ error: "No tienes permisos para realizar esta operacion." });
     }
-    const authorToUpdate = await Author.findById(id);
-    if (authorToUpdate) {
-      Object.assign(authorToUpdate, req.body); // Le asigna todo del body a la const
-      await authorToUpdate.save();
-      // Eliminamos el password del objeto que devuelve
-      const authorPasswordFiltered = authorToUpdate.toObject();
-      delete authorPasswordFiltered.password;
-      res.json(authorToUpdate);
+    const postToUpdate = await Post.findById(id);
+    if (postToUpdate) {
+      Object.assign(postToUpdate, req.body); // Le asigna todo del body a la const
+      await postToUpdate.save();
+      // Eliminamos el password del objeto user
+      const userPasswordFiltered = req.user.toObject();
+      delete userPasswordFiltered.password;
+      res.json(postToUpdate);
     } else {
       res.status(404).json({});
     }
@@ -154,32 +157,32 @@ authorRoutes.put("/:id", isAuth, async (req: any, res: Response, next: NextFunct
 });
 
 // Login de usuarios
-authorRoutes.post("/login", async (req: any, res: Response, next: NextFunction) => {
+postRoutes.post("/login", async (req: any, res: Response, next: NextFunction) => {
   try {
     // Declaracion de dos const con el mismo nombre que los campos que queremos del body
-    const { user, password } = req.body;
+    const { id, password } = req.body;
 
     // Comprueba si hay usuario y contraseña
-    if (!user || !password) {
-      res.status(400).send("Falta el usuario o la contraseña.");
+    if (!id || !password) {
+      res.status(400).send("Falta el id o la contraseña del usuario.");
       return;
     }
 
     // Busca el usuario, seleccionando tambien el campo password
-    const authorFound = await Author.findOne({ user }).select("+password");
-    if (!authorFound) {
+    const userFound = await User.findOne({ id }).select("+password");
+    if (!userFound) {
       return res.status(401).json({ error: "Combinacion de usuario y password incorrecta" });
     }
 
     // Compara el password recibido con el guardado previamente encriptado
-    const passwordMatches = await bcrypt.compare(password, authorFound.password as string);
+    const passwordMatches = await bcrypt.compare(password, userFound.password as string);
     if (passwordMatches) {
       // Eliminamos el password del objeto que devuelve
-      const authorPasswordFiltered = authorFound.toObject();
-      delete authorPasswordFiltered.password;
+      const userPasswordFiltered = userFound.toObject();
+      delete userPasswordFiltered.password;
 
       // Generamos token JWT
-      const jwtToken = generateToken(authorFound._id.toString(), authorFound.user);
+      const jwtToken = generateToken(userFound._id.toString(), userFound.user);
 
       console.log("Login correcto");
 

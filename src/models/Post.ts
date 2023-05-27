@@ -7,6 +7,7 @@ export interface IPost {
   user: IUser;
   text: string;
   attachedFile: string;
+  liked?: [IUser];
   group?: IGroup;
 }
 
@@ -19,16 +20,24 @@ const authorSchema = new Schema<IPost>({
   text: {
     type: String,
     trim: true,
-    minLength: [0, "No se puede enviar un post vacío."],
+    minLength: [1, "No se puede enviar un post vacío."],
     required: true,
   },
   attachedFile: {
     type: String,
     required: false,
   },
+  liked: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
   group: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Group",
   },
 });
 
