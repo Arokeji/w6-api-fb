@@ -52,7 +52,7 @@ const userSchema = new Schema<IUser>({
     required: true,
     validate: {
       validator: (value: string) => validator.isMobilePhone(value),
-      message: "Debe ser un numero de teléfono móvil.",
+      message: "Debe ser un numero de teléfono móvil valido.",
     },
   },
   password: {
